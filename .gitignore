@@ -1,0 +1,7 @@
+# JetBrains project settings
+.idea/
+
+# Environment files
+.env
+.env.*
+!.env.example
