@@ -39,8 +39,28 @@ jobs:
   test:
     name: Tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: murmur
+          POSTGRES_PASSWORD: murmur
+          POSTGRES_DB: murmur_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U murmur -d murmur_test"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      MURMUR_DATABASE_URL: postgresql+psycopg://murmur:murmur@localhost:5433/murmur_test
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.3.3
       - run: uv sync --locked
+      - name: Migrations apply cleanly
+        run: uv run alembic upgrade head
+      - name: Models and migrations match
+        run: uv run alembic check
       - run: uv run pytest
