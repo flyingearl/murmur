@@ -5,7 +5,9 @@ from datetime import UTC, datetime
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
-app = FastAPI(title="Murmur API", version="0.1.0")
+from murmur_api.config import SettingsDep, get_settings
+
+app = FastAPI(title=get_settings().app_name, version="0.1.0")
 
 
 class Health(BaseModel):
@@ -38,7 +40,7 @@ class ConnectionManager:
         for connection in list(self.active):
             try:
                 await connection.send_text(text)
-            except Exception:
+            except Exception:  # noqa: BLE001 - a dead socket must not break the room
                 await self.disconnect(connection)
 
 
@@ -46,12 +48,17 @@ manager = ConnectionManager()
 
 
 @app.websocket("/ws/{name}")
-async def chat(websocket: WebSocket, name: str) -> None:
+async def chat(websocket: WebSocket, name: str, settings: SettingsDep) -> None:
     await manager.connect(websocket)
     await manager.broadcast(f"{name} joined")
     try:
         while True:
             text = await websocket.receive_text()
+            if len(text) > settings.max_message_length:
+                await websocket.send_text(
+                    f"Not sent . Messages can be up to {settings.max_message_length} characters"
+                )
+                continue
             await manager.broadcast(f"{name}: {text}")
     except WebSocketDisconnect:
         await manager.disconnect(websocket)

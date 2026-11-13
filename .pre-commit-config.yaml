@@ -1,0 +1,18 @@
+# Runs on every `git commit`. Install once per clone with: pre-commit install
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.5  # keep in step with ruff in api/pyproject.toml
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
