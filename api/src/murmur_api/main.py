@@ -38,7 +38,7 @@ class ConnectionManager:
         for connection in list(self.active):
             try:
                 await connection.send_text(text)
-            except Exception:
+            except Exception:   # noqa: BLE001 - a dead socket must not break the room
                 await self.disconnect(connection)
 
 
