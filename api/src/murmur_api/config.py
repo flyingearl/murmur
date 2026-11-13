@@ -1,6 +1,5 @@
 """Application settings, read from environment variables and an optional .env file."""
 
-import os
 from functools import lru_cache
 from typing import Annotated
 
