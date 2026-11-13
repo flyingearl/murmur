@@ -45,3 +45,7 @@ select = [
 strict = true
 files = ["src", "tests"]
 plugins = ["pydantic.mypy"]
+
+[tool.pytest]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers"]
