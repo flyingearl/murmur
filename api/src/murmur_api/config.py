@@ -15,6 +15,7 @@ class Settings(BaseSettings):
 
     app_name: str = "Murmur API"
     max_message_length: int = Field(default=4000, gt=0)
+    database_url: str = "postgresql+psycopg://murmur:murmur@localhost:5433/murmur"
 
 
 @lru_cache
