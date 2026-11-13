@@ -40,3 +40,8 @@ select = [
     "ASYNC",  # flake8-async: blocking calls in async code
     "RUF",    # Ruff's own rules
 ]
+
+[tool.mypy]
+strict = true
+files = ["src", "tests"]
+plugins = ["pydantic.mypy"]
